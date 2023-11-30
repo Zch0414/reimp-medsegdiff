@@ -8,6 +8,7 @@ from guided_diffusion.resample import create_named_schedule_sampler
 from guided_diffusion.bratsloader import BRATSDataset, BRATSDataset3D
 from guided_diffusion.isicloader import ISICDataset
 from guided_diffusion.custom_dataset_loader import CustomDataset
+from guided_diffusion.kvasir_seg import build_dataset
 from guided_diffusion.script_util import (
     model_and_diffusion_defaults,
     create_model_and_diffusion,
@@ -33,6 +34,9 @@ def main():
         transform_train = transforms.Compose(tran_list)
 
         ds = ISICDataset(args, args.data_dir, transform_train)
+        args.in_ch = 4
+    elif args.data_name == 'KVASIR':
+        ds, _ = build_dataset(42, args.image_size)
         args.in_ch = 4
     elif args.data_name == 'BRATS':
         tran_list = [transforms.Resize((args.image_size,args.image_size)),]
