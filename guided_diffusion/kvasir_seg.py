@@ -19,12 +19,14 @@ def build_dataset(seed, image_size):
         [
             transforms.LoadImaged(keys=["image", "label"]),
             transforms.EnsureChannelFirstd(keys=["image", "label"]),
-            transforms.ToTensord(keys=["image", "label"], track_meta=False),
+            transforms.ToTensord(keys=["image", "label"]),
             PadLongestSided(keys=["image", "label"], padder=None),
             transforms.Resized(
                 keys=["image", "label"], spatial_size=(image_size, image_size), 
-                mode=["bilinear", "nearest"],
+                mode=["bilinear", "nearest"], anti_aliasing=[True, False], align_corners=[False, None],
             ),        
+            transforms.ToTensord(keys=["image", "label"], track_meta=False),
+
         ]
     )
     train_transform.set_random_state(seed)
