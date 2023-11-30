@@ -123,7 +123,8 @@ def main():
             th.cuda.synchronize()
             print('time for 1 sample', start.elapsed_time(end))  #time measurement for the generation of 1 sample
 
-            co = th.tensor(cal_out)
+            # co = th.tensor(cal_out)
+            co = None
             if args.version == 'new':
                 enslist.append(sample[:,-1,:,:])
             else:

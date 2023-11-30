@@ -553,7 +553,8 @@ class GaussianDiffusion:
             final["sample"] = sample
             final["cal"] = cal
 
-            cal_out = torch.clamp(final["cal"] + 0.25 * final["sample"][:,-1,:,:].unsqueeze(1), 0, 1)
+            # cal_out = torch.clamp(final["cal"] + 0.25 * final["sample"][:,-1,:,:].unsqueeze(1), 0, 1)
+            cal_out = None
         else:
             print('no dpm-solver')
             i = 0
