@@ -1189,14 +1189,15 @@ class DPM_Solver:
                     x = self.correcting_xt_fn(x, t, step + 1)
                 if return_intermediate:
                     intermediates.append(x)
-        cal = None
-        out = self.model(torch.cat((self.img,x), dim=1).to(dtype = torch.float), t)
-        if isinstance(out, tuple):
-            x, cal = out
+        # cal = None
+        # out = self.model(torch.cat((self.img,x), dim=1).to(dtype = torch.float), t)
+        # if isinstance(out, tuple):
+        #     x, cal = out
         if return_intermediate:
             return x, intermediates
         else:
-            return x, cal
+            # return x, cal
+            return x, None
 
 
 
