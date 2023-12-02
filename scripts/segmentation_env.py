@@ -24,6 +24,9 @@ import matplotlib.pyplot as plt
 from guided_diffusion.utils import staple
 import argparse
 
+from monai import transforms
+from guided_diffusion.kvasir_seg import PadLongestSided
+
 import collections
 import logging
 import math
@@ -137,6 +140,7 @@ def main():
     argParser = argparse.ArgumentParser()
     argParser.add_argument("--inp_pth")
     argParser.add_argument("--out_pth")
+    argParser.add_argument("--data_name")
     args = argParser.parse_args()
     mix_res = (0,0)
     num = 0
@@ -156,8 +160,13 @@ def main():
                 # if args.debug:
                 #     print('pred max is', pred.max())
                 #     vutils.save_image(pred, fp = os.path.join('./results/' + str(ind)+'pred.jpg'), nrow = 1, padding = 10)
-                gt = torchvision.transforms.PILToTensor()(gt)
-                gt = torchvision.transforms.Resize((256,256))(gt)
+                if args.data_name == 'KVASIR':
+                    gt = torchvision.transforms.PILToTensor()(gt)
+                    gt = PadLongestSided()(gt)
+                    gt = torchvision.transforms.Resize((256,256))(gt)
+                else:
+                    gt = torchvision.transforms.PILToTensor()(gt)
+                    gt = torchvision.transforms.Resize((256,256))(gt)
                 gt = torch.unsqueeze(gt,0).float() / 255.0
                 # if args.debug:
                 #     vutils.save_image(gt, fp = os.path.join('./results/' + str(ind)+'gt.jpg'), nrow = 1, padding = 10)
