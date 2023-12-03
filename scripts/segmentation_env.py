@@ -85,8 +85,7 @@ def dice_coeff(input, target):
     return s / (i + 1)
 
 
-def eval_seg(pred,true_mask_p,
-             threshold = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), eval_mode = "avg"):
+def eval_seg(pred,true_mask_p,threshold = (0.1, 0.3, 0.5, 0.7, 0.9)):
     '''
     threshold: a int or a tuple of int
     masks: [b,2,h,w]
@@ -116,7 +115,7 @@ def eval_seg(pred,true_mask_p,
             
         return iou_d / len(threshold), iou_c / len(threshold), disc_dice / len(threshold), cup_dice / len(threshold)
     else:
-        eiou, edice = [], []
+        eiou, edice = 0,0
         for th in threshold:
 
             gt_vmask_p = (true_mask_p > th).float()
@@ -127,20 +126,17 @@ def eval_seg(pred,true_mask_p,
             disc_mask = gt_vmask_p [:,0,:,:].squeeze(1).cpu().numpy().astype('int32')
     
             '''iou for numpy'''
-            eiou.append(iou(disc_pred,disc_mask))
+            eiou += iou(disc_pred,disc_mask)
 
             '''dice for torch'''
-            edice.append(dice_coeff(vpred[:,0,:,:], gt_vmask_p[:,0,:,:]).item())
+            edice += dice_coeff(vpred[:,0,:,:], gt_vmask_p[:,0,:,:]).item()
             
-        if eval_mode == "max":
-            return max(eiou), max(edice)
-        return sum(eiou) / len(threshold), sum(edice) / len(threshold)
+        return eiou / len(threshold), edice / len(threshold)
 
 def main():
     argParser = argparse.ArgumentParser()
     argParser.add_argument("--inp_pth")
     argParser.add_argument("--out_pth")
-    argParser.add_argument("--eval_mode")
     args = argParser.parse_args()
     mix_res = (0,0)
     num = 0
@@ -165,7 +161,7 @@ def main():
                 gt = torch.unsqueeze(gt,0).float() / 255.0
                 # if args.debug:
                 #     vutils.save_image(gt, fp = os.path.join('./results/' + str(ind)+'gt.jpg'), nrow = 1, padding = 10)
-                temp = eval_seg(pred, gt, eval_mode = args.eval_mode)
+                temp = eval_seg(pred, gt)
                 mix_res = tuple([sum(a) for a in zip(mix_res, temp)])
     iou, dice = tuple([a/num for a in mix_res])
     print('iou is',iou)
