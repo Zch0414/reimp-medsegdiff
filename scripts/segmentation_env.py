@@ -152,7 +152,11 @@ def main():
                 num += 1
                 ind = name.split('_')[0]
                 pred = Image.open(os.path.join(root, name)).convert('L')
-                gt_name = "ISIC_" + ind + "_Segmentation.png"
+                if args.data_name == 'KVASIR':
+                    ind = name.split('_')[1]
+                    gt_name = f"label_{ind}.png"
+                else:
+                    gt_name = "ISIC_" + ind + "_Segmentation.png"
                 gt = Image.open(os.path.join(gt_path, gt_name)).convert('L')
                 pred = torchvision.transforms.PILToTensor()(pred)
                 pred = torch.unsqueeze(pred,0).float() 
@@ -162,7 +166,10 @@ def main():
                 #     vutils.save_image(pred, fp = os.path.join('./results/' + str(ind)+'pred.jpg'), nrow = 1, padding = 10)
                 if args.data_name == 'KVASIR':
                     gt = torchvision.transforms.PILToTensor()(gt)
-                    gt = PadLongestSided()(gt)
+                    temp = dict()
+                    temp['label'] = gt
+                    temp = PadLongestSided(keys=["label"], padder=None)(temp)
+                    gt = temp['label']
                     gt = torchvision.transforms.Resize((256,256))(gt)
                 else:
                     gt = torchvision.transforms.PILToTensor()(gt)
