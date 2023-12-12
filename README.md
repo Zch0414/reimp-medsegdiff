@@ -8,7 +8,7 @@ With the capability of capturing the distribution of real-world data, using the 
 
 ![](readme/overview.png)
 
-We validate our method by incorporating DPM-Solver with MedSegDiff, and did comprehensive experiments on two benchmarks. The first is ISIC for skin lesion segmentation, the second one is KVASIR-Seg for polyp segmentation. Our method shows a 20$\times$ faster mask generation speed while maintaining competitive results.
+We validate our method by incorporating DPM-Solver with MedSegDiff, and did comprehensive experiments on two benchmarks. The first is ISIC for skin lesion segmentation, the second one is KVASIR-Seg for polyp segmentation. Our method shows a 20x faster mask generation speed while maintaining competitive results.
 
 ![](readme/quant.png)
 ![](readme/qual.png)
